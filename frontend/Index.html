@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Agriculture Advisor</title>
+
+<link rel="icon" href="data:,">
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+
+<section class="hero">
+    <div class="hero-content">
+        <h1>Smart Agriculture Platform</h1>
+        <p>
+            AI-powered crop recommendations, disease detection,
+            weather insights and marketplace solutions for modern farming.
+        </p>
+
+        <button class="hero-btn" onclick="startAnalysis()">
+    Start Analysis
+</button>
+    </div>
+</section>
+
+<div class="container">
+
+
+<!-- HEADER -->
+<div id="appPage" style="display:none;">
+    
+    <div class="container">
+
+        <div class="header">
+            <h1>🌱 Smart Agriculture Advisor</h1>
+
+            <select id="langSelect">
+                <option value="en">English</option>
+                <option value="hi">हिंदी</option>
+            </select>
+
+            <div class="tabs">
+                <button onclick="showSection('recommend')">🌾 Recommendation</button>
+                <button onclick="showSection('diseaseSection')">🌿 Disease</button>
+                <button onclick="showSection('marketSection')">🛒 Marketplace</button>
+            </div>
+
+          
+
+<!-- MAIN -->
+<div class="main-card">
+
+<!-- RECOMMEND -->
+<div id="recommend">
+
+<div class="mode-selector">
+    <h3>Choose Input Mode</h3>
+
+    <button onclick="setMode('farmer')" class="mode-btn">👨‍🌾 Farmer Mode</button>
+    <button onclick="setMode('expert')" class="mode-btn">🧠 Expert Mode</button>
+</div>
+<h2>📍 Enter Farm Details</h2>
+
+<div class="input-group">
+<input id="location" placeholder="Enter location">
+<button class="btn" onclick="detectLocation()">📍 Use Current Location</button>
+</div>
+
+<div id="farmerInputs" style="display:none;">
+
+<!-- Soil -->
+<div class="input-group">
+<label>Soil Type</label>
+<select id="soilType">
+<option value="low">Low</option>
+<option value="medium">Medium</option>
+<option value="high">High</option>
+</select>
+</div>
+
+<!-- Water -->
+<div class="input-group">
+<label>Water Source</label>
+<select id="waterSource">
+<option value="Rainfed">Rainfed</option>
+<option value="Irrigation">Irrigation</option>
+</select>
+</div>
+
+<!-- Temperature -->
+<div class="input-group">
+<label>Temperature (°C)</label>
+<input type="number" id="tempFarmer" placeholder="e.g. 25">
+</div>
+
+<!-- Humidity -->
+<div class="input-group">
+<label>Humidity (%)</label>
+<input type="number" id="humidityFarmer" placeholder="e.g. 60">
+</div>
+
+<!-- Rainfall -->
+<div class="input-group">
+<label>Rainfall (mm)</label>
+<input type="number" id="rainfallFarmer" placeholder="e.g. 120">
+</div>
+
+</div>
+
+<div id="expertInputs">
+
+<div class="range-box">
+N:
+<input type="range" id="N" min="0" max="100" value="50">
+<span id="Nval" class="range-value"></span>
+</div>
+
+<div class="range-box">
+P:
+<input type="range" id="P" min="0" max="100" value="50">
+<span id="Pval" class="range-value"></span>
+</div>
+
+<div class="range-box">
+K:
+<input type="range" id="K" min="0" max="100" value="50">
+<span id="Kval" class="range-value"></span>
+</div>
+
+<div class="range-box">
+pH:
+<input type="range" id="ph" min="0" max="14" step="0.1" value="6.5">
+<span id="phval" class="range-value"></span>
+</div>
+
+</div>
+
+<button class="btn" id="submitBtn">Get Recommendation</button>
+
+<div id="loadingSection" style="display:none;">Loading...</div>
+
+<div id="errorSection">
+<p id="errorMessage"></p>
+</div>
+
+<!-- RESULTS -->
+<div id="resultsSection" style="display:none;">
+
+<div class="result-card">
+<h3 id="cropTitle">🌾 Crop</h3>
+<div id="cropRecommendation"></div>
+</div>
+
+<div class="result-card">
+<h3>🌤️ Weather</h3>
+<canvas id="weatherChart"></canvas>
+<div id="weatherForecast"></div>
+</div>
+
+<div class="result-card">
+<h3>🛒 Products</h3>
+<div id="productSection" class="product-grid"></div>
+</div>
+
+<div class="result-card">
+<h3 id="tipsTitle">💡 Tips</h3>
+<div id="farmingTips"></div>
+</div>
+
+</div>
+</div>
+
+<!-- DISEASE -->
+<div id="diseaseSection" style="display:none;">
+    <h2>Disease Detection</h2>
+
+    <!-- Image Upload -->
+    <input type="file" id="plantImage" accept="image/*" onchange="previewImage(event)">
+    <br>
+    <img id="imagePreview" src="" alt="Image Preview" style="max-width:200px; margin:10px 0; display:none;">
+    <br>
+
+    <!-- Camera Buttons -->
+    <button class="btn" onclick="openCamera()">Open Camera</button>
+    <button class="btn" onclick="closeCamera()">Close Camera</button>
+    <br>
+    <video id="camera" autoplay style="display:none; max-width:300px; margin-top:10px;"></video>
+    <br>
+
+    <button class="btn" onclick="detectDisease()">Detect Disease</button>
+
+    <div id="diseaseResult" style="margin-top:10px; font-weight:bold;"></div>
+</div>
+
+<!-- MARKET -->
+<div id="marketSection" style="display:none;">
+<h2>Marketplace</h2>
+<div id="marketplace" class="product-grid"></div>
+</div>
+
+</div>
+</div>
+
+<!-- CHAT BUTTON -->
+<button id="chatToggle" onclick="toggleChatbot()">💬</button>
+
+<!-- CHATBOT -->
+<div id="chatbot">
+    <div class="chat-header">
+        🤖 Smart Assistant
+        <span onclick="toggleChatbot()">✖</span>
+    </div>
+
+    <div id="chatMessages"></div>
+
+    <!-- Image Upload -->
+    <div style="padding:5px;">
+        <input type="file" id="chatImage" accept="image/*">
+    </div>
+
+    <!-- Controls -->
+    <div class="chat-controls">
+        <input id="chatInput" placeholder="Ask anything...">
+        <button onclick="startVoice()">🎤</button>
+        <button onclick="sendMessage()">Send</button>
+    </div>
+</div>
+
+<script src="Script.js"></script>
+<div class="footer">
+    <h3>FarmerHelper</h3>
+    <p>Empowering Farmers with Smart Agricultural Solutions</p>
+    <br>
+    <p>📞 Toll Free: 1800-180-1551</p>
+    <p>✉ support@farmerhelper.gov.in</p>
+</div>
+
+</body>
+</html>
